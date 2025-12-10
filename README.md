@@ -28,50 +28,168 @@ A modular monolith architecture for intelligent workforce scheduling using const
 
 ## Prerequisites
 
-- Podman 4.0+ (rootless)
-- podman-compose 1.0+
-- Node.js 20+ (for local development)
-- Python 3.11+ (for local solver development)
+- **Podman 4.0+** (rootless) with podman-compose
+- **Node.js 22+** (for local development)
+- **Python 3.11+** (for local solver development)
 
-## Quick Start
+---
 
-### Build and Run with Podman
+## 🚀 Quick Start with Podman
+
+### Build and Start All Services
 
 ```bash
 cd infra
-make build
-make up
+podman-compose up -d --build
 ```
 
 ### Access Services
 
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:4000/api/v1
-- **Solver API**: http://localhost:8000 (internal)
-- **API Docs**: http://localhost:4000/api/docs
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:3000 |
+| Backend API | http://localhost:4000/api/v1 |
+| API Docs (Swagger) | http://localhost:4000/api/docs |
+| Solver (internal) | http://localhost:8000 |
 
-### Run Migrations
-
-```bash
-make migrate
-```
-
-### Run Tests
+### Common Commands
 
 ```bash
-# Backend tests
-make test-backend
+# View logs
+podman-compose logs -f
 
-# Solver tests
-make test-solver
+# View specific service logs
+podman-compose logs -f backend
+podman-compose logs -f solver
+podman-compose logs -f frontend
 
-# All tests
-make test
+# Stop all services
+podman-compose down
+
+# Stop and remove volumes (DESTRUCTIVE)
+podman-compose down -v
+
+# Rebuild a specific service
+podman-compose build backend
+podman-compose up -d backend
+
+# Run database migrations
+podman exec -it samay_backend npm run typeorm:migrate
+
+# Access database shell
+podman exec -it samay_db psql -U samay -d samay
 ```
+
+---
+
+## 🛠️ Running Services Individually (Development)
+
+If you prefer to run services locally without containers:
+
+### 1. Database (PostgreSQL)
+
+```bash
+# Start only the database container
+cd infra
+podman-compose up -d db
+
+# Or use a local PostgreSQL installation
+# Create database: samay, user: samay, password: samay
+```
+
+### 2. Backend (NestJS)
+
+```bash
+cd backend
+
+# Install dependencies
+npm install
+
+# Set environment variables
+export DATABASE_URL="postgres://samay:samay@localhost:5432/samay"
+export SOLVER_URL="http://localhost:8000"
+export JWT_SECRET="your-secret-key"
+export PORT=4000
+
+# Run migrations
+npm run typeorm:migrate
+
+# Start in development mode (with hot reload)
+npm run start:dev
+
+# Or start in production mode
+npm run build
+npm run start:prod
+```
+
+### 3. Solver (Python FastAPI)
+
+```bash
+cd solver
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Set environment variables
+export SOLVER_TIMEOUT=30
+export LOG_LEVEL=info
+
+# Start the solver
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### 4. Frontend (React + Vite)
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Set environment variables (optional, defaults work for local dev)
+export VITE_API_URL="http://localhost:4000/api/v1"
+export VITE_WS_URL="http://localhost:4000"
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+npm run preview
+```
+
+---
+
+## 🧪 Running Tests
+
+### Backend Tests
+
+```bash
+cd backend
+npm install
+npm run test           # Unit tests
+npm run test:e2e       # End-to-end tests
+npm run test:cov       # Coverage report
+```
+
+### Solver Tests
+
+```bash
+cd solver
+source venv/bin/activate
+pip install -r requirements.txt
+pytest -v
+```
+
+---
 
 ## API Contract
 
-### POST /api/v1/optimize
+### POST /api/v1/roster/optimize
 
 Triggers the constraint solver to generate optimal shift assignments.
 
@@ -123,11 +241,14 @@ Triggers the constraint solver to generate optimal shift assignments.
 }
 ```
 
+---
+
 ## Project Structure
 
 ```
 samay/
 ├── backend/                 # NestJS modular monolith
+│   ├── Containerfile.backend
 │   ├── src/
 │   │   ├── modules/
 │   │   │   ├── users/       # User management domain
@@ -138,67 +259,61 @@ samay/
 │   │   └── main.ts
 │   └── test/
 ├── solver/                  # Python FastAPI + OR-Tools
+│   ├── Containerfile.solver
 │   ├── app/
 │   │   ├── main.py
 │   │   └── optimize.py
 │   └── tests/
 ├── frontend/                # React + Tailwind + FullCalendar
+│   ├── Containerfile.frontend
 │   └── src/
 │       ├── components/
 │       └── stores/
 └── infra/                   # Podman orchestration
     ├── podman-compose.yml
-    ├── Makefile
     └── examples/
 ```
 
-## Security Features
-
-- **Non-root containers**: All services run as unprivileged users
-- **RBAC**: Role-based access control with `@Roles()` decorator
-- **Team Guards**: Resource ownership verification
-- **Optimistic Locking**: `@VersionColumn()` on Shift entity
-- **SELinux**: `:Z` volume mounts for compatibility
-
-## Development
-
-### Local Backend Development
-
-```bash
-cd backend
-npm install
-npm run start:dev
-```
-
-### Local Solver Development
-
-```bash
-cd solver
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload
-```
-
-### Local Frontend Development
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
+---
 
 ## Environment Variables
+
+### Backend
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `DATABASE_URL` | `postgres://samay:samay@db:5432/samay` | PostgreSQL connection string |
 | `SOLVER_URL` | `http://solver:8000` | Solver service URL |
 | `JWT_SECRET` | - | JWT signing secret (required) |
+| `PORT` | `4000` | Server port |
 | `NODE_ENV` | `development` | Environment mode |
+
+### Solver
+
+| Variable | Default | Description |
+|----------|---------|-------------|
 | `SOLVER_TIMEOUT` | `30` | Max solver runtime in seconds |
+| `LOG_LEVEL` | `info` | Logging level |
+
+### Frontend
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `VITE_API_URL` | `/api/v1` | Backend API URL |
+| `VITE_WS_URL` | `http://localhost:4000` | WebSocket URL |
+
+---
+
+## Security Features
+
+- **Non-root containers**: All services run as unprivileged users
+- **RBAC**: Role-based access control with `@Roles()` decorator
+- **Team Guards**: Resource ownership verification
+- **Optimistic Locking**: `@VersionColumn()` on Shift entity prevents race conditions
+- **SELinux**: `:Z` volume mounts for compatibility
+
+---
 
 ## License
 
 MIT
-

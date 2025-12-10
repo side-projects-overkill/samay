@@ -3,7 +3,7 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from '../src/app.module';
 
 describe('RosterController (e2e)', () => {
@@ -61,7 +61,7 @@ describe('RosterController (e2e)', () => {
       return request(app.getHttpServer())
         .get('/api/v1/health')
         .expect(200)
-        .expect((res) => {
+        .expect((res: request.Response) => {
           expect(res.body.status).toBe('ok');
           expect(res.body.service).toBe('samay-backend');
         });
@@ -120,7 +120,7 @@ describe('RosterController (e2e)', () => {
       return request(app.getHttpServer())
         .post('/api/v1/roster/optimize')
         .send(validPayload)
-        .expect((res) => {
+        .expect((res: request.Response) => {
           // Either success (200) or solver unavailable (503)
           expect([200, 503]).toContain(res.status);
         });

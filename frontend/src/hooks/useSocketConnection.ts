@@ -15,7 +15,6 @@ interface RosterUpdateEvent {
 
 export function useSocketConnection(teamId: string | null) {
   const socketRef = useRef<Socket | null>(null)
-  const handleShiftUpdate = useRosterStore((state) => state.handleShiftUpdate)
   const loadTeamData = useRosterStore((state) => state.loadTeamData)
   
   const handleRosterUpdate = useCallback((event: RosterUpdateEvent) => {

@@ -6,7 +6,7 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin, { Draggable } from '@fullcalendar/interaction'
-import type { EventClickArg, EventDropArg, DateSelectArg } from '@fullcalendar/core'
+import type { EventClickArg, EventDropArg } from '@fullcalendar/core'
 import { useRosterStore, type TeamMember, type CalendarEvent } from '../stores/rosterStore'
 import { OptimizationPanel } from './OptimizationPanel'
 import { ShiftDetailModal } from './ShiftDetailModal'
@@ -43,8 +43,6 @@ export function RosterBuilder() {
     selectedShift,
     assignShift,
     setSelectedShift,
-    isOptimizing,
-    optimizationResult,
   } = useRosterStore()
   
   // Initialize draggable elements
@@ -93,7 +91,6 @@ export function RosterBuilder() {
   // Handle external drop (drag employee onto calendar)
   const handleEventReceive = useCallback(async (info: any) => {
     const memberId = info.draggedEl.dataset.memberId
-    const droppedOnEvent = info.event
     
     // Find the event that was dropped on
     const calendarApi = calendarRef.current?.getApi()
@@ -139,7 +136,7 @@ export function RosterBuilder() {
   }, [])
   
   // Event allow callback for client-side validation
-  const eventAllow = useCallback((dropInfo: any, draggedEvent: any) => {
+  const eventAllow = useCallback((_dropInfo: any, draggedEvent: any) => {
     // Only allow dropping on open shifts
     if (draggedEvent.extendedProps?.status !== 'OPEN') {
       return false

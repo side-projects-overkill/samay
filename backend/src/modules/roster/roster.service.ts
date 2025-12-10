@@ -21,6 +21,7 @@ import {
   EmployeeDto,
   OpenShiftDto,
   OptimizeStatus,
+  AvailabilityTypeDto,
 } from '../../common/dto/optimize.dto';
 
 @Injectable()
@@ -275,7 +276,7 @@ export class RosterService {
         availability: availabilities.map((a) => ({
           start: a.startTime.toISOString(),
           end: a.endTime.toISOString(),
-          type: a.type,
+          type: a.type as unknown as AvailabilityTypeDto,
         })),
         preferences: user.shiftPreferences || {},
       });
