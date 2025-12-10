@@ -90,8 +90,8 @@ export class Shift {
   @Column({ type: 'timestamptz', nullable: true })
   assignedAt: Date | null;
 
-  @Column({ length: 50, nullable: true })
-  assignmentSource: 'manual' | 'solver' | 'swap' | null;
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  assignmentSource: string | null;
 
   // Shift-specific notes
   @Column({ type: 'text', nullable: true })
@@ -99,11 +99,7 @@ export class Shift {
 
   // Additional metadata
   @Column({ type: 'jsonb', default: {} })
-  metadata: {
-    solverScore?: number;
-    originalAssignee?: string;
-    swapHistory?: Array<{ from: string; to: string; at: string }>;
-  };
+  metadata: Record<string, unknown>;
 
   @CreateDateColumn()
   createdAt: Date;

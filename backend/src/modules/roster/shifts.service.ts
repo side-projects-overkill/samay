@@ -303,13 +303,14 @@ export class ShiftsService {
       shift.status = ShiftStatus.ASSIGNED;
 
       if (previousUserId && source === 'swap') {
-        const history = shift.metadata.swapHistory || [];
+        const metadata = shift.metadata as Record<string, unknown>;
+        const history = (metadata.swapHistory as Array<{ from: string; to: string; at: string }>) || [];
         history.push({
           from: previousUserId,
           to: userId,
           at: new Date().toISOString(),
         });
-        shift.metadata = { ...shift.metadata, swapHistory: history };
+        shift.metadata = { ...metadata, swapHistory: history };
       }
 
       const saved = await queryRunner.manager.save(shift);
