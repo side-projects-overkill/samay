@@ -1,5 +1,5 @@
 # solver/Containerfile.solver
-# Multi-stage build for Python FastAPI solver - production image runs as non-root
+# Multi-stage build for Python FastAPI solver using Poetry - production image runs as non-root
 
 # ============================================
 # Stage 1: Build (includes compilers for OR-Tools)
@@ -11,16 +11,32 @@ WORKDIR /app
 # Install build dependencies required for OR-Tools compilation
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Create virtual environment
+# Install Poetry
+ENV POETRY_HOME="/opt/poetry"
+ENV POETRY_VERSION="1.7.1"
+ENV POETRY_VENV="/opt/poetry-venv"
+ENV POETRY_CACHE_DIR="/opt/.cache"
+
+RUN python -m venv $POETRY_VENV \
+    && $POETRY_VENV/bin/pip install -U pip setuptools \
+    && $POETRY_VENV/bin/pip install poetry==$POETRY_VERSION
+
+ENV PATH="$POETRY_VENV/bin:$PATH"
+
+# Create virtual environment for the application
 RUN python -m venv /opt/venv
+ENV VIRTUAL_ENV="/opt/venv"
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Copy and install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+# Copy Poetry files
+COPY pyproject.toml poetry.lock* ./
+
+# Install dependencies (without dev dependencies for production)
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-interaction --no-ansi --only main --no-root
 
 # ============================================
 # Stage 2: Production (minimal runtime)
@@ -52,4 +68,3 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 
 # Run with uvicorn (production settings)
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
-
