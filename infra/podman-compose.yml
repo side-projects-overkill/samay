@@ -1,0 +1,83 @@
+# infra/podman-compose.yml
+# Podman orchestration for Samay workforce scheduling platform
+# Uses rootless containers with SELinux-compatible mounts
+
+version: "3.8"
+
+services:
+  db:
+    image: docker.io/library/postgres:16-alpine
+    container_name: samay_db
+    environment:
+      POSTGRES_USER: samay
+      POSTGRES_PASSWORD: samay_secure_pwd_change_in_prod
+      POSTGRES_DB: samay
+    volumes:
+      - pgdata:/var/lib/postgresql/data:Z
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U samay -d samay"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Containerfile.backend
+    container_name: samay_backend
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://samay:samay_secure_pwd_change_in_prod@db:5432/samay
+      SOLVER_URL: http://solver:8000
+      JWT_SECRET: ${JWT_SECRET:-change_this_secret_in_production}
+      PORT: 4000
+    ports:
+      - "4000:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  solver:
+    build:
+      context: ../solver
+      dockerfile: Containerfile.solver
+    container_name: samay_solver
+    environment:
+      SOLVER_TIMEOUT: ${SOLVER_TIMEOUT:-30}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Containerfile.frontend
+    container_name: samay_frontend
+    environment:
+      VITE_API_URL: http://localhost:4000/api/v1
+      VITE_WS_URL: ws://localhost:4000
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+    driver: local
+

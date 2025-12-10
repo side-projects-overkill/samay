@@ -1,0 +1,61 @@
+{
+  "status": "INFEASIBLE",
+  "assignments": [],
+  "fitness": null,
+  "diagnostics": {
+    "reason": "Insufficient staff with required skills",
+    "relaxed": false,
+    "unsatCore": null,
+    "minimalUnsat": [
+      "shift-006 requires skills [skill_cashier, skill_forklift] but no available employee has both",
+      "Employee e1a2b3c4 has BLACKOUT during shift-005 timeframe",
+      "Only 1 employee available for 2 concurrent shifts on 2025-12-01 morning"
+    ],
+    "constraintViolations": [
+      {
+        "type": "SKILL_MISMATCH",
+        "shiftId": "shift-006",
+        "required": ["skill_cashier", "skill_forklift"],
+        "availableEmployees": []
+      },
+      {
+        "type": "INSUFFICIENT_COVERAGE",
+        "day": "2025-12-01",
+        "shiftsNeeded": 2,
+        "employeesAvailable": 1
+      }
+    ]
+  },
+  "suggestions": [
+    {
+      "type": "relax_skill_requirement",
+      "description": "Remove skill_forklift requirement from shift-006",
+      "impact": "May assign less qualified employee"
+    },
+    {
+      "type": "add_available_employee",
+      "description": "Add employee with skills [skill_cashier, skill_forklift]",
+      "impact": "Would enable full coverage"
+    },
+    {
+      "type": "split_shift",
+      "description": "Split shift-006 into two 4-hour shifts",
+      "impact": "Could be covered by two different employees"
+    }
+  ],
+  "relaxedSolution": {
+    "status": "OPTIMAL_RELAXED",
+    "assignments": [
+      {
+        "shiftId": "shift-001",
+        "employeeId": "e1a2b3c4-d5e6-7f8a-9b0c-1d2e3f4a5b6c",
+        "start": "2025-12-01T09:00:00+05:30",
+        "end": "2025-12-01T13:00:00+05:30",
+        "notes": "Assigned despite AVOIDED preference"
+      }
+    ],
+    "fitness": -15,
+    "relaxedConstraints": ["skill_requirements", "preference_weights"]
+  }
+}
+

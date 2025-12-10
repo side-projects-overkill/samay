@@ -1,0 +1,130 @@
+/* frontend/src/index.css */
+/* Global styles and Tailwind imports */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* FullCalendar custom styles */
+.fc {
+  @apply font-sans;
+}
+
+.fc .fc-toolbar-title {
+  @apply text-xl font-semibold text-slate-800;
+}
+
+.fc .fc-button {
+  @apply bg-samay-600 border-samay-600 text-white font-medium px-4 py-2 rounded-lg 
+         hover:bg-samay-700 focus:ring-2 focus:ring-samay-500 focus:ring-offset-2
+         transition-colors duration-150;
+}
+
+.fc .fc-button:disabled {
+  @apply bg-slate-300 border-slate-300 cursor-not-allowed;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+  @apply bg-samay-700 border-samay-700;
+}
+
+.fc .fc-col-header-cell {
+  @apply bg-slate-100 border-slate-200;
+}
+
+.fc .fc-col-header-cell-cushion {
+  @apply py-3 text-sm font-medium text-slate-600;
+}
+
+.fc .fc-daygrid-day-number {
+  @apply text-sm font-medium text-slate-700 p-2;
+}
+
+.fc .fc-event {
+  @apply rounded-md shadow-sm border-0 px-2 py-1;
+}
+
+.fc .fc-event-title {
+  @apply text-xs font-medium;
+}
+
+.fc .fc-timegrid-slot {
+  @apply h-12;
+}
+
+.fc .fc-timegrid-slot-label {
+  @apply text-xs text-slate-500;
+}
+
+/* Shift status colors */
+.fc-event-open {
+  @apply bg-slate-400 text-white;
+}
+
+.fc-event-assigned {
+  @apply bg-blue-500 text-white;
+}
+
+.fc-event-confirmed {
+  @apply bg-green-500 text-white;
+}
+
+.fc-event-in-progress {
+  @apply bg-yellow-500 text-slate-900;
+}
+
+.fc-event-completed {
+  @apply bg-slate-500 text-white;
+}
+
+.fc-event-cancelled {
+  @apply bg-red-500 text-white line-through;
+}
+
+/* External draggable events */
+.external-event {
+  @apply cursor-grab active:cursor-grabbing bg-samay-100 text-samay-800 
+         px-3 py-2 rounded-lg border border-samay-200 text-sm font-medium
+         hover:bg-samay-200 transition-colors duration-150
+         select-none;
+}
+
+.external-event:active {
+  @apply shadow-lg;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-100 rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full hover:bg-slate-400;
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    theme('colors.slate.200') 25%,
+    theme('colors.slate.100') 50%,
+    theme('colors.slate.200') 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+

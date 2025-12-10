@@ -1,0 +1,51 @@
+{
+  "status": "OPTIMAL",
+  "assignments": [
+    {
+      "shiftId": "shift-001",
+      "employeeId": "e1a2b3c4-d5e6-7f8a-9b0c-1d2e3f4a5b6c",
+      "start": "2025-12-01T09:00:00+05:30",
+      "end": "2025-12-01T13:00:00+05:30"
+    },
+    {
+      "shiftId": "shift-002",
+      "employeeId": "f2b3c4d5-e6f7-8a9b-0c1d-2e3f4a5b6c7d",
+      "start": "2025-12-01T13:00:00+05:30",
+      "end": "2025-12-01T17:00:00+05:30"
+    },
+    {
+      "shiftId": "shift-003",
+      "employeeId": "a3c4d5e6-f7a8-9b0c-1d2e-3f4a5b6c7d8e",
+      "start": "2025-12-01T09:00:00+05:30",
+      "end": "2025-12-01T13:00:00+05:30"
+    },
+    {
+      "shiftId": "shift-004",
+      "employeeId": "f2b3c4d5-e6f7-8a9b-0c1d-2e3f4a5b6c7d",
+      "start": "2025-12-02T09:00:00+05:30",
+      "end": "2025-12-02T13:00:00+05:30"
+    },
+    {
+      "shiftId": "shift-005",
+      "employeeId": "a3c4d5e6-f7a8-9b0c-1d2e-3f4a5b6c7d8e",
+      "start": "2025-12-02T13:00:00+05:30",
+      "end": "2025-12-02T17:00:00+05:30"
+    },
+    {
+      "shiftId": "shift-006",
+      "employeeId": "e1a2b3c4-d5e6-7f8a-9b0c-1d2e3f4a5b6c",
+      "start": "2025-12-03T09:00:00+05:30",
+      "end": "2025-12-03T17:00:00+05:30"
+    }
+  ],
+  "fitness": 85,
+  "diagnostics": {
+    "relaxed": false,
+    "unsatCore": null,
+    "solveTimeMs": 127,
+    "totalShifts": 6,
+    "assignedShifts": 6,
+    "unfilledShifts": 0
+  }
+}
+
