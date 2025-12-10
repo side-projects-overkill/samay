@@ -6,6 +6,7 @@ import { useAuthStore } from './stores/authStore';
 import { Layout } from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { LoginPage } from './pages/LoginPage';
+import { SignUpPage } from './pages/SignUpPage';
 
 // Associate pages
 import { AssociateDashboard } from './pages/associate/AssociateDashboard';
@@ -47,6 +48,7 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
 
         {/* Root redirect */}
         <Route path="/" element={<RootRedirect />} />

@@ -2,7 +2,7 @@
 // Enterprise-styled login page with role-based redirect
 
 import { useState, FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore, DEMO_USERS } from '../stores/authStore';
 import { Lock, Mail, AlertCircle, Loader2, Clock } from 'lucide-react';
 
@@ -202,6 +202,14 @@ export function LoginPage() {
             </button>
           </div>
         </div>
+
+        {/* Sign Up Link */}
+        <p className="mt-6 text-center text-slate-400">
+          Don't have an account?{' '}
+          <Link to="/signup" className="text-red-400 hover:text-red-300 font-medium">
+            Sign up
+          </Link>
+        </p>
 
         {/* Footer */}
         <p className="mt-8 text-center text-sm text-slate-500">
