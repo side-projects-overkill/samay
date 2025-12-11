@@ -16,6 +16,10 @@
     "@fullcalendar/interaction": "^6.1.10",
     "@fullcalendar/react": "^6.1.10",
     "@fullcalendar/timegrid": "^6.1.10",
+    "@patternfly/patternfly": "^6.4.0",
+    "@patternfly/react-core": "^6.4.0",
+    "@patternfly/react-icons": "^6.4.0",
+    "@patternfly/react-table": "^6.4.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.2.0",
     "lucide-react": "^0.303.0",
@@ -42,4 +46,3 @@
     "vitest": "^1.1.3"
   }
 }
-

@@ -1,78 +1,221 @@
 /* frontend/src/index.css */
-/* Global styles and Tailwind imports */
+/* PatternFly and Red Hat brand styling */
+
+/* PatternFly CSS import */
+@import "@patternfly/patternfly/patternfly.css";
+@import "@patternfly/patternfly/patternfly-addons.css";
+
+/* Red Hat Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Red+Hat+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Red+Hat+Text:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Red Hat Design System - CSS Variables */
+:root {
+  /* Red Hat Brand Colors */
+  --rh-color-brand-red-on-light: #ee0000;
+  --rh-color-brand-red-on-dark: #ff442b;
+  --rh-color-surface-darkest: #151515;
+  --rh-color-surface-darker: #1b1b1b;
+  --rh-color-surface-dark: #212121;
+  --rh-color-surface-light: #f0f0f0;
+  --rh-color-text-primary-on-dark: #ffffff;
+  --rh-color-text-secondary-on-dark: #c7c7c7;
+  --rh-color-border-subtle-on-dark: #3c3f42;
+  --rh-color-border-strong-on-dark: #6a6e73;
+  
+  /* PatternFly Dark Theme Overrides */
+  --pf-v5-global--BackgroundColor--dark-100: #151515;
+  --pf-v5-global--BackgroundColor--dark-200: #1b1b1b;
+  --pf-v5-global--BackgroundColor--dark-300: #212121;
+  --pf-v5-global--BackgroundColor--dark-400: #292929;
+  
+  /* Typography */
+  --rh-font-family-heading: 'Red Hat Display', system-ui, sans-serif;
+  --rh-font-family-body: 'Red Hat Text', system-ui, sans-serif;
+  --rh-font-family-code: 'Red Hat Mono', monospace;
+  
+  /* Spacing */
+  --rh-space-xs: 4px;
+  --rh-space-sm: 8px;
+  --rh-space-md: 16px;
+  --rh-space-lg: 24px;
+  --rh-space-xl: 32px;
+  --rh-space-2xl: 48px;
+  
+  /* Border radius */
+  --rh-border-radius-default: 3px;
+  --rh-border-radius-lg: 8px;
+  --rh-border-radius-pill: 64px;
+}
+
 /* Base styles */
 html {
-  @apply bg-slate-900;
+  background-color: var(--rh-color-surface-darkest);
 }
 
 body {
-  @apply font-sans antialiased;
+  font-family: var(--rh-font-family-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--rh-color-text-primary-on-dark);
 }
 
-/* Custom scrollbar for dark theme */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--rh-font-family-heading);
+  font-weight: 500;
+}
+
+code, pre {
+  font-family: var(--rh-font-family-code);
+}
+
+/* Custom scrollbar for dark theme - Red Hat style */
 ::-webkit-scrollbar {
-  @apply w-2 h-2;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-slate-800 rounded-full;
+  background: #212121;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-600 rounded-full hover:bg-slate-500;
+  background: #4f4f4f;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6d6d6d;
+}
+
+/* Red Hat Button Styles */
+.rh-btn {
+  @apply inline-flex items-center justify-center gap-2 px-4 py-2 font-medium rounded-rh transition-all duration-150;
+  font-family: var(--rh-font-family-body);
+}
+
+.rh-btn-primary {
+  @apply bg-[#ee0000] text-white hover:bg-rh-red-700 focus:ring-2 focus:ring-rh-red-400 focus:ring-offset-2 focus:ring-offset-dark-400;
+}
+
+.rh-btn-secondary {
+  @apply bg-transparent text-white border border-white/30 hover:bg-white/10;
+}
+
+.rh-btn-tertiary {
+  @apply bg-[#06c] text-white hover:bg-pf-blue-500;
+}
+
+.rh-btn-danger {
+  @apply bg-[#c9190b] text-white hover:bg-pf-red-200;
+}
+
+/* Red Hat Card Styles */
+.rh-card {
+  @apply bg-dark-200 border border-rh-black-700/50 rounded-lg;
+}
+
+.rh-card-header {
+  @apply px-6 py-4 border-b border-rh-black-700/50;
+}
+
+.rh-card-body {
+  @apply px-6 py-4;
+}
+
+/* Red Hat Input Styles */
+.rh-input {
+  @apply w-full px-3 py-2 bg-dark-300 border border-rh-black-600 rounded-rh text-white placeholder-rh-black-400
+         focus:outline-none focus:border-[#06c] focus:ring-1 focus:ring-[#06c] transition-colors;
+}
+
+.rh-select {
+  @apply w-full px-3 py-2 bg-dark-300 border border-rh-black-600 rounded-rh text-white appearance-none
+         focus:outline-none focus:border-[#06c] focus:ring-1 focus:ring-[#06c] transition-colors;
+}
+
+/* Red Hat Badge Styles */
+.rh-badge {
+  @apply inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-sm;
+}
+
+.rh-badge-red {
+  @apply bg-[#c9190b]/20 text-pf-red-100 border border-pf-red-100/30;
+}
+
+.rh-badge-blue {
+  @apply bg-[#06c]/20 text-pf-blue-200 border border-pf-blue-200/30;
+}
+
+.rh-badge-green {
+  @apply bg-[#3e8635]/20 text-pf-green-200 border border-pf-green-200/30;
+}
+
+.rh-badge-gold {
+  @apply bg-[#f0ab00]/20 text-pf-gold-200 border border-pf-gold-200/30;
+}
+
+.rh-badge-purple {
+  @apply bg-[#6753ac]/20 text-pf-purple-200 border border-pf-purple-200/30;
+}
+
+.rh-badge-cyan {
+  @apply bg-[#009596]/20 text-pf-cyan-200 border border-pf-cyan-200/30;
 }
 
 /* FullCalendar custom styles for dark theme */
 .fc {
-  @apply font-sans;
+  font-family: var(--rh-font-family-body);
 }
 
 .fc .fc-toolbar-title {
-  @apply text-xl font-semibold text-white;
+  font-family: var(--rh-font-family-heading);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: white;
 }
 
 .fc .fc-button {
-  @apply bg-slate-700 border-slate-600 text-slate-300 font-medium px-4 py-2 rounded-lg 
-         hover:bg-slate-600 hover:text-white focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-slate-800
+  @apply bg-dark-200 border-rh-black-600 text-rh-black-300 font-medium px-4 py-2 rounded-rh 
+         hover:bg-dark-100 hover:text-white focus:ring-2 focus:ring-[#06c] focus:ring-offset-2 focus:ring-offset-dark-400
          transition-colors duration-150;
 }
 
 .fc .fc-button:disabled {
-  @apply bg-slate-800 border-slate-700 text-slate-500 cursor-not-allowed;
+  @apply bg-dark-300 border-rh-black-700 text-rh-black-500 cursor-not-allowed;
 }
 
 .fc .fc-button-primary:not(:disabled).fc-button-active,
 .fc .fc-button-primary:not(:disabled):active {
-  @apply bg-red-500/20 border-red-500/30 text-red-400;
+  @apply bg-[#ee0000]/20 border-[#ee0000]/30 text-rh-red-400;
 }
 
 .fc .fc-col-header-cell {
-  @apply bg-slate-800/50 border-slate-700;
+  @apply bg-dark-200/50 border-rh-black-700;
 }
 
 .fc .fc-col-header-cell-cushion {
-  @apply py-3 text-sm font-medium text-slate-400;
+  @apply py-3 text-sm font-medium text-rh-black-400;
 }
 
 .fc .fc-daygrid-day-number {
-  @apply text-sm font-medium text-slate-400 p-2;
+  @apply text-sm font-medium text-rh-black-400 p-2;
 }
 
 .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
-  @apply text-red-400;
+  @apply text-rh-red-500;
 }
 
 .fc .fc-daygrid-day.fc-day-today {
-  @apply bg-red-500/10;
+  @apply bg-[#ee0000]/10;
 }
 
 .fc .fc-event {
-  @apply rounded-md shadow-sm border-0 px-2 py-1;
+  @apply rounded-rh shadow-sm border-0 px-2 py-1;
 }
 
 .fc .fc-event-title {
@@ -84,52 +227,52 @@ body {
 }
 
 .fc .fc-timegrid-slot-label {
-  @apply text-xs text-slate-500;
+  @apply text-xs text-rh-black-500;
 }
 
 .fc .fc-scrollgrid {
-  @apply border-slate-700;
+  @apply border-rh-black-700;
 }
 
 .fc td, .fc th {
-  @apply border-slate-700/50;
+  @apply border-rh-black-700/50;
 }
 
 /* Shift status colors */
 .fc-event-open {
-  @apply bg-yellow-500 text-slate-900;
+  @apply bg-[#f0ab00] text-dark-400;
 }
 
 .fc-event-assigned {
-  @apply bg-blue-500 text-white;
+  @apply bg-[#06c] text-white;
 }
 
 .fc-event-confirmed {
-  @apply bg-emerald-500 text-white;
+  @apply bg-[#3e8635] text-white;
 }
 
 .fc-event-in-progress {
-  @apply bg-purple-500 text-white;
+  @apply bg-[#009596] text-white;
 }
 
 .fc-event-completed {
-  @apply bg-slate-500 text-white;
+  @apply bg-rh-black-500 text-white;
 }
 
 .fc-event-cancelled {
-  @apply bg-red-500 text-white line-through;
+  @apply bg-[#c9190b] text-white line-through;
 }
 
 /* External draggable events */
 .external-event {
-  @apply cursor-grab active:cursor-grabbing bg-slate-700 text-slate-200 
-         px-3 py-2 rounded-lg border border-slate-600 text-sm font-medium
-         hover:bg-slate-600 hover:border-slate-500 transition-colors duration-150
+  @apply cursor-grab active:cursor-grabbing bg-dark-200 text-rh-black-200 
+         px-3 py-2 rounded-rh border border-rh-black-600 text-sm font-medium
+         hover:bg-dark-100 hover:border-rh-black-500 transition-colors duration-150
          select-none;
 }
 
 .external-event:active {
-  @apply shadow-lg cursor-grabbing;
+  @apply shadow-rh-lg cursor-grabbing;
 }
 
 /* Animations */
@@ -145,9 +288,9 @@ body {
 .loading-shimmer {
   background: linear-gradient(
     90deg,
-    theme('colors.slate.800') 25%,
-    theme('colors.slate.700') 50%,
-    theme('colors.slate.800') 75%
+    #212121 25%,
+    #292929 50%,
+    #212121 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
@@ -160,5 +303,65 @@ input:focus, select:focus, textarea:focus, button:focus {
 
 /* Selection */
 ::selection {
-  @apply bg-red-500/30 text-white;
+  @apply bg-[#ee0000]/30 text-white;
+}
+
+/* Red Hat Navigation Styles */
+.rh-nav-item {
+  @apply flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-rh transition-all duration-150;
+}
+
+.rh-nav-item-active {
+  @apply bg-[#ee0000]/15 text-white border-l-2 border-[#ee0000];
+}
+
+.rh-nav-item-inactive {
+  @apply text-rh-black-300 hover:text-white hover:bg-dark-100;
+}
+
+/* PatternFly Alert Overrides */
+.pf-v5-c-alert {
+  @apply rounded-rh;
+}
+
+/* Red Hat Table Styles */
+.rh-table {
+  @apply w-full text-left;
+}
+
+.rh-table thead {
+  @apply bg-dark-300/50;
+}
+
+.rh-table th {
+  @apply px-4 py-3 text-sm font-medium text-rh-black-300 uppercase tracking-wider;
+}
+
+.rh-table td {
+  @apply px-4 py-4;
+}
+
+.rh-table tbody tr {
+  @apply border-b border-rh-black-700/50 hover:bg-dark-100/50 transition-colors;
+}
+
+/* Status dot indicators */
+.status-dot {
+  @apply w-2 h-2 rounded-full;
+}
+
+.status-dot-active {
+  @apply bg-[#3e8635];
+}
+
+.status-dot-inactive {
+  @apply bg-rh-black-500;
+}
+
+.status-dot-pending {
+  @apply bg-[#f0ab00];
+}
+
+.status-dot-error {
+  @apply bg-[#c9190b];
 }

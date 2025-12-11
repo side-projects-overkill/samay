@@ -66,12 +66,12 @@ export interface OptimizationResult {
   assignments: Array<{
     shiftId: string
     employeeId: string
-    start: string
-    end: string
+    start?: string
+    end?: string
   }>
-  fitness: number | null
-  diagnostics: {
-    relaxed: boolean
+  fitness?: number | null
+  diagnostics?: {
+    relaxed?: boolean
     reason?: string
     minimalUnsat?: string[]
     solveTimeMs?: number
@@ -168,10 +168,38 @@ export const useRosterStore = create<RosterState>()(
           const { from, to } = get().dateRange
           const data = await api.getCalendar(teamId, from, to)
           
+          // Map API response to store types
+          const mappedMembers: TeamMember[] = data.members.map((m: any) => ({
+            id: m.id,
+            firstName: m.firstName,
+            lastName: m.lastName,
+            email: m.email,
+            role: m.role,
+            // Convert skills from {id, code, name} to string codes
+            skills: m.skills?.map((s: any) => typeof s === 'string' ? s : s.code) || [],
+          }))
+          
+          const mappedEvents: CalendarEvent[] = data.events.map((e: any) => ({
+            id: e.id,
+            title: e.assignedUser ? `${e.assignedUser.firstName} ${e.assignedUser.lastName}` : 'Open Shift',
+            start: e.startDateTime,
+            end: e.endDateTime,
+            backgroundColor: e.status === 'OPEN' ? '#f0ab00' : e.status === 'ASSIGNED' ? '#06c' : '#3e8635',
+            borderColor: e.status === 'OPEN' ? '#c58c00' : e.status === 'ASSIGNED' ? '#004080' : '#1e4f18',
+            extendedProps: {
+              shiftId: e.id,
+              shiftCode: e.shiftCode,
+              status: e.status,
+              assignedUserId: e.assignedUserId || null,
+              requiredSkills: e.requiredSkills || [],
+              version: e.version || 1,
+            },
+          }))
+          
           set({
             teamName: data.meta.teamName,
-            members: data.members,
-            events: data.events,
+            members: mappedMembers,
+            events: mappedEvents,
             isLoading: false,
           })
         } catch (error) {
@@ -243,7 +271,14 @@ export const useRosterStore = create<RosterState>()(
             dateRange.from,
             dateRange.to
           )
-          set({ optimizationResult: result, isOptimizing: false })
+          // Map result to expected type
+          const mappedResult: OptimizationResult = {
+            status: result.status,
+            assignments: result.assignments,
+            fitness: null,
+            diagnostics: { relaxed: false },
+          }
+          set({ optimizationResult: mappedResult, isOptimizing: false })
         } catch (error) {
           set({
             error: error instanceof Error ? error.message : 'Optimization failed',

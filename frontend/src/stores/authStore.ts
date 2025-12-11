@@ -1,5 +1,5 @@
 // frontend/src/stores/authStore.ts
-// Authentication store with role-based access control
+// Authentication store with role-based access control - Connected to backend
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -31,13 +31,14 @@ interface AuthState {
   logout: () => void;
   clearError: () => void;
   setUser: (user: User) => void;
+  validateToken: () => Promise<void>;
 }
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1';
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       token: null,
       isAuthenticated: false,
@@ -78,6 +79,18 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: () => {
+        // Call logout endpoint (fire and forget)
+        const token = get().token;
+        if (token) {
+          fetch(`${API_URL}/auth/logout`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          }).catch(() => {});
+        }
+        
         set({
           user: null,
           token: null,
@@ -88,7 +101,43 @@ export const useAuthStore = create<AuthState>()(
 
       clearError: () => set({ error: null }),
 
-      setUser: (user: User) => set({ user, isAuthenticated: true }),
+      setUser: (user: User) => set({ 
+        user, 
+        isAuthenticated: true,
+        // Generate a temporary token for demo mode
+        token: btoa(JSON.stringify({ 
+          userId: user.id, 
+          email: user.email, 
+          role: user.role,
+          exp: Date.now() + 24 * 60 * 60 * 1000 
+        })),
+      }),
+
+      validateToken: async () => {
+        const token = get().token;
+        if (!token) {
+          set({ user: null, isAuthenticated: false });
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_URL}/auth/validate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token }),
+          });
+
+          if (!response.ok) {
+            throw new Error('Token invalid');
+          }
+
+          const user = await response.json();
+          set({ user, isAuthenticated: true });
+        } catch {
+          // Token is invalid, clear auth state
+          set({ user: null, token: null, isAuthenticated: false });
+        }
+      },
     }),
     {
       name: 'samay-auth',
@@ -100,35 +149,4 @@ export const useAuthStore = create<AuthState>()(
     }
   )
 );
-
-// Demo users for development (remove in production)
-export const DEMO_USERS: Record<string, User> = {
-  'associate@samay.io': {
-    id: 'usr-001',
-    email: 'associate@samay.io',
-    firstName: 'Alex',
-    lastName: 'Johnson',
-    role: 'ASSOCIATE',
-    teamId: 'team-001',
-    teamName: 'Morning Crew',
-    managerId: 'usr-002',
-    managerName: 'Sarah Miller',
-  },
-  'manager@samay.io': {
-    id: 'usr-002',
-    email: 'manager@samay.io',
-    firstName: 'Sarah',
-    lastName: 'Miller',
-    role: 'MANAGER',
-    teamId: 'team-001',
-    teamName: 'Morning Crew',
-  },
-  'admin@samay.io': {
-    id: 'usr-003',
-    email: 'admin@samay.io',
-    firstName: 'Admin',
-    lastName: 'User',
-    role: 'SUPERADMIN',
-  },
-};
 

@@ -8,6 +8,7 @@ import { UserManagementModule } from './modules/users/user-management.module';
 import { AvailabilityModule } from './modules/availability/availability.module';
 import { RosterModule } from './modules/roster/roster.module';
 import { SolverModule } from './modules/solver/solver.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { HealthController } from './health.controller';
 
 @Module({
@@ -36,6 +37,7 @@ import { HealthController } from './health.controller';
     }),
 
     // Domain modules (modular monolith boundaries)
+    AuthModule,
     UserManagementModule,
     AvailabilityModule,
     RosterModule,

@@ -9,7 +9,7 @@ import { clsx } from 'clsx'
 interface Team {
   id: string
   name: string
-  memberCount: number
+  memberCount?: number
 }
 
 export function Sidebar() {

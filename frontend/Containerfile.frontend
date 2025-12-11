@@ -8,6 +8,14 @@ FROM docker.io/library/node:22-alpine AS builder
 
 WORKDIR /app
 
+# Build arguments for Vite environment variables
+ARG VITE_API_URL=/api/v1
+ARG VITE_WS_URL=ws://localhost:4000
+
+# Set environment variables for build
+ENV VITE_API_URL=${VITE_API_URL}
+ENV VITE_WS_URL=${VITE_WS_URL}
+
 # Copy package files
 COPY package*.json ./
 
@@ -49,4 +57,3 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD wget -q --spider http://localhost:8080 || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]
-
